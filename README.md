@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/icon.png" alt="image-gen-mcp icon" width="128" height="128">
+</p>
+
 # Image Gen MCP
 
 A Model Context Protocol (MCP) server that provides AI-powered image generation using Google's Gemini API.
