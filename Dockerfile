@@ -12,4 +12,6 @@ FROM gcr.io/distroless/static-debian12:nonroot
 
 COPY --from=builder /bin/image-gen-mcp /bin/image-gen-mcp
 
+ENV OUTPUT_DIR=/output
+
 ENTRYPOINT ["/bin/image-gen-mcp"]

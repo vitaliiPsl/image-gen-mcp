@@ -3,20 +3,24 @@ package tools
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 
+	"github.com/vitaliipsl/image-gen-mcp/internal/client"
 	"github.com/vitaliipsl/image-gen-mcp/internal/dto"
-	"github.com/vitaliipsl/image-gen-mcp/internal/gemini"
+	"github.com/vitaliipsl/image-gen-mcp/internal/storage"
 )
 
 type GenerateImageTool struct {
-	geminiClient *gemini.Client
+	geminiClient client.Client
+	storage      storage.ImageStorage
 }
 
-func NewGenerateImageTool(geminiClient *gemini.Client) *GenerateImageTool {
+func NewGenerateImageTool(geminiClient client.Client, imageStorage storage.ImageStorage) *GenerateImageTool {
 	return &GenerateImageTool{
 		geminiClient: geminiClient,
+		storage:      imageStorage,
 	}
 }
 
@@ -41,13 +45,21 @@ func (t *GenerateImageTool) Handler(
 		return errorResult("no image was generated; the model may have declined the request")
 	}
 
-	var content []mcp.Content
+	var filePaths []string
 	for _, img := range result.Images {
-		content = append(content, &mcp.ImageContent{
-			Data:     []byte(img.Data),
-			MIMEType: img.MIMEType,
-		})
+		filePath, err := t.storage.Save(img.Data, img.MIMEType)
+		if err != nil {
+			return errorResult(fmt.Sprintf("failed to save image: %v", err))
+		}
+
+		filePaths = append(filePaths, filePath)
 	}
 
-	return &mcp.CallToolResult{Content: content}, nil, nil
+	return &mcp.CallToolResult{
+		Content: []mcp.Content{
+			&mcp.TextContent{
+				Text: fmt.Sprintf("Generated %d image(s):\n%s", len(filePaths), strings.Join(filePaths, "\n")),
+			},
+		},
+	}, nil, nil
 }

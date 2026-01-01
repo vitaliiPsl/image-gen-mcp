@@ -5,13 +5,7 @@ import (
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 
-	"github.com/vitaliipsl/image-gen-mcp/internal/gemini"
 	"github.com/vitaliipsl/image-gen-mcp/internal/mcp/tools"
-)
-
-const (
-	serverName    = "image-gen-mcp"
-	serverVersion = "1.0.0"
 )
 
 type Server struct {
@@ -20,10 +14,10 @@ type Server struct {
 	generateImageTool *tools.GenerateImageTool
 }
 
-func New(geminiClient *gemini.Client, generateImageTool *tools.GenerateImageTool) *Server {
+func New(generateImageTool *tools.GenerateImageTool) *Server {
 	mcpServer := mcp.NewServer(&mcp.Implementation{
-		Name:    serverName,
-		Version: serverVersion,
+		Name:    "image-gen-mcp",
+		Version: "1.0.0",
 	}, nil)
 
 	s := &Server{

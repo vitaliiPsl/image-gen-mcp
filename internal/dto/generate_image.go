@@ -5,11 +5,11 @@ type GenerateImageParams struct {
 	AspectRatio string `json:"aspect_ratio" jsonschema:"Aspect ratio of the generated image in x:y format."`
 }
 
-type GeneratedImage struct {
-	Data     string
-	MIMEType string
-}
-
 type GenerateImageResult struct {
 	Images []GeneratedImage
+}
+
+type GeneratedImage struct {
+	Data     []byte
+	MIMEType string
 }

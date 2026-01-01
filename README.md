@@ -1,4 +1,4 @@
-# image-gen-mcp
+# Image Gen MCP
 
 A Model Context Protocol (MCP) server that provides AI-powered image generation using Google's Gemini API.
 
@@ -44,16 +44,18 @@ go build -o bin/image-gen-mcp ./cmd/server
 
 ## Configuration
 
-The server requires the following environment variable:
+The server requires the following environment variables:
 
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `GEMINI_API_KEY` | Yes | Your Google Gemini API key |
+| `OUTPUT_DIR` | No | Directory to save generated images (default: `./generated_images`) |
 
 You can also create a `.env` file in the project root:
 
 ```env
 GEMINI_API_KEY=your_api_key_here
+OUTPUT_DIR=/path/to/output
 ```
 
 ## Usage
@@ -77,6 +79,7 @@ Add the following to your Claude Desktop configuration file:
         "-i",
         "--rm",
         "-e", "GEMINI_API_KEY=your_api_key_here",
+        "-v", "/path/to/output:/output",
         "vitaliipsl/image-gen-mcp"
       ]
     }
@@ -92,7 +95,8 @@ Add the following to your Claude Desktop configuration file:
     "image-gen": {
       "command": "/path/to/image-gen-mcp",
       "env": {
-        "GEMINI_API_KEY": "your_api_key_here"
+        "GEMINI_API_KEY": "your_api_key_here",
+        "OUTPUT_DIR": "/path/to/output"
       }
     }
   }
@@ -101,14 +105,25 @@ Add the following to your Claude Desktop configuration file:
 
 ### With Claude Code
 
-Add to your Claude Code MCP settings:
+Add via CLI:
+
+```bash
+claude mcp add image-gen /path/to/image-gen-mcp \
+  -e GEMINI_API_KEY=your_api_key_here \
+  -e OUTPUT_DIR=/path/to/output
+```
+
+Or add to your Claude Code MCP settings:
 
 ```json
 {
   "mcpServers": {
     "image-gen": {
-      "command": "docker",
-      "args": ["run", "-i", "--rm", "-e", "GEMINI_API_KEY=your_api_key_here", "vitaliipsl/image-gen-mcp"]
+      "command": "/path/to/image-gen-mcp",
+      "env": {
+        "GEMINI_API_KEY": "your_api_key_here",
+        "OUTPUT_DIR": "/path/to/output"
+      }
     }
   }
 }
@@ -127,12 +142,12 @@ Generate an image based on a text prompt.
 | `prompt` | string | Yes | The text prompt describing the image to generate |
 | `aspect_ratio` | string | No | Aspect ratio in `x:y` format (e.g., `16:9`, `1:1`, `4:3`) |
 
+**Output:**
+
+Generated images are saved to the configured `OUTPUT_DIR` and the tool returns the file path(s). This approach is used instead of returning inline base64 data because MCP clients like Claude have response size limits (~1MB), and high-resolution images from Gemini can exceed this limit.
+
 **Example:**
 
 ```
 Generate an image of a sunset over mountains with aspect ratio 16:9
 ```
-
-## License
-
-MIT

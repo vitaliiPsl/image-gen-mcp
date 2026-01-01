@@ -1,8 +1,7 @@
-package gemini
+package client
 
 import (
 	"context"
-	"encoding/base64"
 	"fmt"
 
 	"google.golang.org/genai"
@@ -14,11 +13,15 @@ const (
 	modelGeminiNanoBanana = "gemini-2.5-flash-image"
 )
 
-type Client struct {
+type Client interface {
+	GenerateImage(ctx context.Context, params *dto.GenerateImageParams) (*dto.GenerateImageResult, error)
+}
+
+type GeminiClient struct {
 	client *genai.Client
 }
 
-func NewClient(ctx context.Context, apiKey string) (*Client, error) {
+func NewGeminiClient(ctx context.Context, apiKey string) (*GeminiClient, error) {
 	client, err := genai.NewClient(ctx, &genai.ClientConfig{
 		APIKey:  apiKey,
 		Backend: genai.BackendGeminiAPI,
@@ -27,10 +30,10 @@ func NewClient(ctx context.Context, apiKey string) (*Client, error) {
 		return nil, fmt.Errorf("failed to create Gemini client: %w", err)
 	}
 
-	return &Client{client: client}, nil
+	return &GeminiClient{client: client}, nil
 }
 
-func (c *Client) GenerateImage(ctx context.Context, params *dto.GenerateImageParams) (*dto.GenerateImageResult, error) {
+func (c *GeminiClient) GenerateImage(ctx context.Context, params *dto.GenerateImageParams) (*dto.GenerateImageResult, error) {
 	config := &genai.GenerateContentConfig{
 		ResponseModalities: []string{"IMAGE", "TEXT"},
 		ImageConfig: &genai.ImageConfig{
@@ -55,9 +58,8 @@ func (c *Client) GenerateImage(ctx context.Context, params *dto.GenerateImagePar
 		}
 		for _, part := range candidate.Content.Parts {
 			if part.InlineData != nil {
-				base64Data := base64.StdEncoding.EncodeToString(part.InlineData.Data)
 				genResult.Images = append(genResult.Images, dto.GeneratedImage{
-					Data:     base64Data,
+					Data:     part.InlineData.Data,
 					MIMEType: part.InlineData.MIMEType,
 				})
 			}
