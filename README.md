@@ -8,9 +8,10 @@ A Model Context Protocol (MCP) server that provides AI-powered image generation 
 
 ## Features
 
-- Generate images from text prompts using Gemini's image generation model
-- MCP-compliant server with stdio transport
-- Lightweight Docker image
+- **Image Generation**: Generate images from text prompts using Gemini 2.5 Flash Image model
+- **Prompting Resources**: Built-in comprehensive prompting guide with examples and templates
+- **MCP-Compliant**: Standard MCP server with stdio transport
+- **Lightweight**: Docker image for easy deployment
 
 ## Prerequisites
 
@@ -31,7 +32,7 @@ A Model Context Protocol (MCP) server that provides AI-powered image generation 
 Pull from Docker Hub:
 
 ```bash
-docker pull vitaliipsl/image-gen-mcp
+docker pull vitaliipsl/image-gen-mcp:latest
 ```
 
 Or build locally:
@@ -84,7 +85,7 @@ Add the following to your Claude Desktop configuration file:
         "--rm",
         "-e", "GEMINI_API_KEY=your_api_key_here",
         "-v", "/path/to/output:/output",
-        "vitaliipsl/image-gen-mcp"
+        "vitaliipsl/image-gen-mcp:latest"
       ]
     }
   }
@@ -155,3 +156,31 @@ Generated images are saved to the configured `OUTPUT_DIR` and the tool returns t
 ```
 Generate an image of a sunset over mountains with aspect ratio 16:9
 ```
+
+## Available Resources
+
+The server provides comprehensive prompting guides and templates as MCP resources:
+
+| Resource URI | Description |
+|-------------|-------------|
+| `prompt://guide/prompting` | Complete prompting guide covering core elements, aspect ratios, advanced techniques, photography terms, text rendering, character consistency, and style-specific guidance |
+| `prompt://guide/examples` | Curated collection of 25+ example prompts demonstrating best practices across all categories |
+| `prompt://templates/list` | Library of 15 ready-to-use prompt templates across photography, illustration, marketing, educational, and professional categories |
+
+### What's Included
+
+**Prompting Guide:**
+- Core elements (subject, composition, action, location, style)
+- Aspect ratio reference (1:1, 16:9, 9:16, etc.)
+- Advanced photography terms and techniques
+- Text rendering in images
+- Character consistency
+- Style-specific guidance
+
+**Template Categories:**
+- **Photography**: Photorealistic portraits, landscapes, product photography
+- **Illustration**: Character design, stylized art, children's book illustrations
+- **Marketing**: Social media posts, product mockups, event posters
+- **Educational**: Infographics, technical illustrations
+- **Professional**: Architectural visualization, food photography
+- **Artistic Styles**: Anime/manga, oil painting
