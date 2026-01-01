@@ -9,6 +9,7 @@ A Model Context Protocol (MCP) server that provides AI-powered image generation 
 ## Features
 
 - **Image Generation**: Generate images from text prompts using Gemini 2.5 Flash Image model
+- **Reference Images**: Support for up to 3 reference images for character consistency, style matching, and object incorporation
 - **Prompting Resources**: Built-in comprehensive prompting guide with examples and templates
 - **MCP-Compliant**: Standard MCP server with stdio transport
 - **Lightweight**: Docker image for easy deployment
@@ -138,7 +139,7 @@ Or add to your Claude Code MCP settings:
 
 ### generate_image
 
-Generate an image based on a text prompt.
+Generate an image based on a text prompt. Optionally accepts reference images for character consistency, style matching, or incorporating specific objects/people into the generated image.
 
 **Parameters:**
 
@@ -146,15 +147,27 @@ Generate an image based on a text prompt.
 |-----------|------|----------|-------------|
 | `prompt` | string | Yes | The text prompt describing the image to generate |
 | `aspect_ratio` | string | No | Aspect ratio in `x:y` format (e.g., `16:9`, `1:1`, `4:3`) |
+| `reference_images` | array[string] | No | Array of file paths to reference images (up to 3 recommended). Use for character consistency, style matching, or incorporating specific objects/people. |
 
 **Output:**
 
 Generated images are saved to the configured `OUTPUT_DIR` and the tool returns the file path(s). This approach is used instead of returning inline base64 data because MCP clients like Claude have response size limits (~1MB), and high-resolution images from Gemini can exceed this limit.
 
-**Example:**
+**Examples:**
 
+Basic generation:
 ```
 Generate an image of a sunset over mountains with aspect ratio 16:9
+```
+
+With reference images for character consistency:
+```
+Generate an image of this character in a cyberpunk city at night, use reference_images: ["/path/to/character.jpg"]
+```
+
+Style matching:
+```
+Generate a landscape in the style of these reference images, use reference_images: ["/path/to/style1.jpg", "/path/to/style2.jpg"]
 ```
 
 ## Available Resources

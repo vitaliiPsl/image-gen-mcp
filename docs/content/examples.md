@@ -95,3 +95,11 @@
 
 ### Food Photography
 "Rustic food photography of artisan sourdough bread, fresh from oven with steam rising, broken open to show airy interior crumb structure, on dark moody wooden cutting board, scattered flour and wheat stalks as props, dramatic side lighting creating texture shadows, shallow depth of field, warm earthy tones, overhead 45-degree angle, professional culinary magazine style"
+
+## Game Assets
+
+### Game Character Sprite
+"Pixel art goblin enemy sprite for 2D platformer game, hunched aggressive pose with claws extended, green skin with brown leather armor, 32x32 pixel resolution, side-view profile, limited 16-color retro palette, transparent background, clear silhouette for gameplay readability, suitable for classic arcade-style game"
+
+### Game UI Icon
+"Legendary health potion game icon, 64x64 pixel square format, stylized hand-painted art style, glowing red crystal vial with golden stopper, centered on dark rounded square background with subtle gradient, soft magical glow effect, clear and recognizable at small inventory size, fantasy RPG aesthetic"

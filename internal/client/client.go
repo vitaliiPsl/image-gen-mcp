@@ -14,7 +14,7 @@ const (
 )
 
 type Client interface {
-	GenerateImage(ctx context.Context, params *dto.GenerateImageParams) (*dto.GenerateImageResult, error)
+	GenerateImage(ctx context.Context, input *dto.GenerateImageInput) (*dto.GenerateImageResult, error)
 }
 
 type GeminiClient struct {
@@ -33,18 +33,35 @@ func NewGeminiClient(ctx context.Context, apiKey string) (*GeminiClient, error) 
 	return &GeminiClient{client: client}, nil
 }
 
-func (c *GeminiClient) GenerateImage(ctx context.Context, params *dto.GenerateImageParams) (*dto.GenerateImageResult, error) {
+func (c *GeminiClient) GenerateImage(ctx context.Context, input *dto.GenerateImageInput) (*dto.GenerateImageResult, error) {
 	config := &genai.GenerateContentConfig{
 		ResponseModalities: []string{"IMAGE", "TEXT"},
 		ImageConfig: &genai.ImageConfig{
-			AspectRatio: params.AspectRatio,
+			AspectRatio: input.AspectRatio,
 		},
+	}
+
+	parts := []*genai.Part{
+		{Text: input.Prompt},
+	}
+
+	for _, refImg := range input.ReferenceImages {
+		parts = append(parts, &genai.Part{
+			InlineData: &genai.Blob{
+				Data:     refImg.Data,
+				MIMEType: refImg.MIMEType,
+			},
+		})
+	}
+
+	content := []*genai.Content{
+		{Parts: parts},
 	}
 
 	result, err := c.client.Models.GenerateContent(
 		ctx,
 		modelGeminiNanoBanana,
-		genai.Text(params.Prompt),
+		content,
 		config,
 	)
 	if err != nil {

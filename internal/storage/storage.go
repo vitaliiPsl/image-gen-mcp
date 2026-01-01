@@ -18,6 +18,7 @@ const (
 
 type ImageStorage interface {
 	Save(data []byte, mimeType string) (string, error)
+	Load(filePath string) (data []byte, mimeType string, err error)
 }
 
 type FileStorage struct {
@@ -63,6 +64,47 @@ func (fs *FileStorage) Save(data []byte, mimeType string) (string, error) {
 	}
 
 	return filePath, nil
+}
+
+func (fs *FileStorage) Load(filePath string) ([]byte, string, error) {
+	data, err := os.ReadFile(filePath)
+	if err != nil {
+		return nil, "", fmt.Errorf("failed to read image file: %w", err)
+	}
+
+	if len(data) == 0 {
+		return nil, "", fmt.Errorf("image file is empty: %s", filePath)
+	}
+
+	mimeType := getMIMETypeFromExtension(filePath)
+
+	return data, mimeType, nil
+}
+
+func getMIMETypeFromExtension(filePath string) string {
+	ext := filepath.Ext(filePath)
+
+	mimeType := mime.TypeByExtension(ext)
+	if mimeType != "" {
+		return mimeType
+	}
+
+	switch ext {
+	case ".jpg", ".jpeg":
+		return "image/jpeg"
+	case ".png":
+		return "image/png"
+	case ".webp":
+		return "image/webp"
+	case ".gif":
+		return "image/gif"
+	case ".heic":
+		return "image/heic"
+	case ".heif":
+		return "image/heif"
+	default:
+		return "image/jpeg"
+	}
 }
 
 func getExtensionFromMIME(mimeType string) string {

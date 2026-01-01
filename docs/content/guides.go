@@ -8,7 +8,6 @@ var PromptingGuide string
 //go:embed examples.md
 var PromptingExamples string
 
-
 type Template struct {
 	Name        string
 	Category    string
@@ -122,6 +121,20 @@ var TemplateLibrary = []Template{
 		Description: "Appetizing professional food photography",
 		Template:    "[Style] food photography of [dish/food item], [fresh/preparation detail], [plating/presentation], on [surface/setting], [props and styling elements], [lighting direction and quality], [depth of field], [color tone], [camera angle], professional [publication type] style",
 		Example:     "Rustic food photography of artisan sourdough bread, fresh from oven with steam rising, broken open showing airy interior crumb, on dark moody wooden cutting board, scattered flour and wheat stalks as props, dramatic side lighting creating texture shadows, shallow depth of field, warm earthy tones, overhead 45-degree angle, professional culinary magazine style",
+	},
+	{
+		Name:        "game_character_sprite",
+		Category:    "game_assets",
+		Description: "2D character sprites and assets for games",
+		Template:    "[Character type] game sprite, [art style], [pose/stance], [outfit/equipment], [size specification], [color palette], transparent background, [perspective view], suitable for [game genre]",
+		Example:     "Fantasy warrior character game sprite, pixel art style, idle stance holding sword, blue medieval armor with cape, 64x64 pixel size, limited vibrant color palette, transparent background, front-facing view, suitable for 2D RPG platformer",
+	},
+	{
+		Name:        "game_item_icon",
+		Category:    "game_assets",
+		Description: "Item icons for game UI and inventories",
+		Template:    "[Item type] game icon, [icon size] square, [art style], centered on [background], [lighting approach], clear at small size, [color scheme], [visual effects if any]",
+		Example:     "Magic sword game icon, 128x128 pixel square, stylized painted art style, centered on dark gradient background, soft glow lighting, clear and recognizable silhouette, blue and silver color scheme with golden accents, subtle magical particle effects",
 	},
 }
 

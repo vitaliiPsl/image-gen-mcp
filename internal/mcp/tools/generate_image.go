@@ -27,7 +27,7 @@ func NewGenerateImageTool(geminiClient client.Client, imageStorage storage.Image
 func (t *GenerateImageTool) Definition() *mcp.Tool {
 	return &mcp.Tool{
 		Name:        "generate_image",
-		Description: "Generate an image based on a text prompt",
+		Description: "Generate an image based on a text prompt. Optionally accepts reference images for character consistency, style matching, or incorporating specific objects/people into the generated image.",
 	}
 }
 
@@ -36,7 +36,18 @@ func (t *GenerateImageTool) Handler(
 	req *mcp.CallToolRequest,
 	params dto.GenerateImageParams,
 ) (*mcp.CallToolResult, any, error) {
-	result, err := t.geminiClient.GenerateImage(ctx, &params)
+	referenceImages, err := t.loadReferenceImages(params.ReferenceImages)
+	if err != nil {
+		return errorResult(fmt.Sprintf("failed to load reference images: %v", err))
+	}
+
+	input := &dto.GenerateImageInput{
+		Prompt:          params.Prompt,
+		AspectRatio:     params.AspectRatio,
+		ReferenceImages: referenceImages,
+	}
+
+	result, err := t.geminiClient.GenerateImage(ctx, input)
 	if err != nil {
 		return errorResult(fmt.Sprintf("failed to generate image: %v", err))
 	}
@@ -62,4 +73,22 @@ func (t *GenerateImageTool) Handler(
 			},
 		},
 	}, nil, nil
+}
+
+func (t *GenerateImageTool) loadReferenceImages(paths []string) ([]dto.ReferenceImage, error) {
+	var referenceImages []dto.ReferenceImage
+
+	for i, refPath := range paths {
+		data, mimeType, err := t.storage.Load(refPath)
+		if err != nil {
+			return nil, fmt.Errorf("failed to load reference image %d (%s): %w", i+1, refPath, err)
+		}
+
+		referenceImages = append(referenceImages, dto.ReferenceImage{
+			Data:     data,
+			MIMEType: mimeType,
+		})
+	}
+
+	return referenceImages, nil
 }
